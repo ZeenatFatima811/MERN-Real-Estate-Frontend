@@ -77,6 +77,7 @@ export default function Profile() {
           "Content-type": "application/json",
         },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
@@ -125,7 +126,9 @@ export default function Profile() {
   const handleShowListings = async (e) => {
     try {
       setShowListingsError(false);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/listings/${currentUser._id}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/listings/${currentUser._id}`,{
+        credentials: "include",
+      });
       const data = await res.json();
       if (data.success == false) {
         setShowListingsError(true);
