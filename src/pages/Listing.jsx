@@ -28,7 +28,7 @@ export default function Listing() {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/listing/get/${params.listingId}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/listing/get/${params.listingId}`);
         const data = await response.json();
         if (data.success === false) {
           setError(true);
