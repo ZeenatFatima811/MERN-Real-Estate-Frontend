@@ -14,6 +14,8 @@ import {
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import defaultAvatar from '../default-avatar.png'; // Agar file src ke root mein hai
+
 
 export default function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -173,7 +175,7 @@ export default function Profile() {
         <img
           onClick={() => fileRef.current.click()}
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-          src={currentUser.avatar}
+          src={currentUser ? currentUser.avatar : defaultAvatar}
           alt="profile"
         />
         <input
