@@ -14,7 +14,6 @@ import {
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import defaultAvatar from '../default-avatar.png'; // Agar file src ke root mein hai
 
 
 export default function Profile() {
@@ -175,7 +174,7 @@ export default function Profile() {
         <img
           onClick={() => fileRef.current.click()}
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-          src={currentUser ? currentUser.avatar : defaultAvatar}
+          src={currentUser ? currentUser.avatar : "/default-avatar.png"}
           alt="profile"
         />
         <input
