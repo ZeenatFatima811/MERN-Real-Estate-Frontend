@@ -51,11 +51,15 @@ export default function Profile() {
 
     console.log("Public URL:", urlData.publicUrl);
 
+    const token = localStorage.getItem("token");
     const res = await fetch(
       `${import.meta.env.VITE_API_URL}/api/user/update/${currentUser._id}`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ avatar: urlData.publicUrl }),
         credentials: "include",
       },
