@@ -15,7 +15,6 @@ import {
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
-
 export default function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
@@ -52,13 +51,21 @@ export default function Profile() {
 
     console.log("Public URL:", urlData.publicUrl);
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/update/${currentUser._id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ avatar: urlData.publicUrl }),
-      credentials: "include",
-    });
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/user/update/${currentUser._id}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatar: urlData.publicUrl }),
+        credentials: "include",
+      },
+    );
     const resdata = await res.json();
+    if (!res.ok || resdata.success === false) {
+      console.log("Update failed:", resdata.message);
+      return; // 🚨 yahan stop karo
+    }
+
     dispatch(updateUserSuccess(resdata));
     // Redux ya local state me update karo
     // dispatch(updateUserAvatar(publicURL));
@@ -72,14 +79,17 @@ export default function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/update/${currentUser._id}`, {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/user/update/${currentUser._id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(formData),
+          credentials: "include",
         },
-        body: JSON.stringify(formData),
-        credentials: "include",
-      });
+      );
       const data = await res.json();
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
@@ -94,10 +104,13 @@ export default function Profile() {
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart());
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/delete/${currentUser._id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/user/delete/${currentUser._id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
       const data = await res.json();
       if (data.success == false) {
         dispatch(deleteUserFailure(data.message));
@@ -112,7 +125,9 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signOutUserStart());
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signout`);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/signout`,
+      );
       const data = await res.json();
       if (data.success === false) {
         dispatch(signOutUserFailure(data.message));
@@ -127,9 +142,12 @@ export default function Profile() {
   const handleShowListings = async (e) => {
     try {
       setShowListingsError(false);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/listings/${currentUser._id}`,{
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/user/listings/${currentUser._id}`,
+        {
+          credentials: "include",
+        },
+      );
       const data = await res.json();
       if (data.success == false) {
         setShowListingsError(true);
@@ -143,9 +161,12 @@ export default function Profile() {
 
   const handleListingDelete = async (listingId) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/listing/delete/${listingId}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/listing/delete/${listingId}`,
+        {
+          method: "DELETE",
+        },
+      );
       const data = await res.json();
       if (data.success == false) {
         console.log(data.message);
@@ -174,7 +195,7 @@ export default function Profile() {
         <img
           onClick={() => fileRef.current.click()}
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-          src={currentUser ? currentUser.avatar : "/default-avatar.png"}
+          src={currentUser?.avatar || "/default-avatar.png"}
           alt="profile"
         />
         <input
@@ -266,7 +287,7 @@ export default function Profile() {
                   Delete
                 </button>
                 <Link to={`/update-listing/${listing._id}`}>
-                <button className="text-green-700 uppercase">Edit</button>
+                  <button className="text-green-700 uppercase">Edit</button>
                 </Link>
               </div>
             </div>
