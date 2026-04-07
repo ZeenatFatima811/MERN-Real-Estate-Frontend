@@ -88,15 +88,17 @@ export default function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
+      const token = localStorage.getItem("token");
+
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/user/update/${currentUser._id}`,
         {
           method: "POST",
           headers: {
-            "Content-type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(formData),
-          credentials: "include",
         },
       );
       const data = await res.json();
@@ -107,7 +109,7 @@ export default function Profile() {
         updateUserSuccess({
           ...currentUser,
           ...data,
-          avatar: currentUser.avatar, 
+          avatar: currentUser.avatar,
         }),
       );
       setUpdateSuccess(true);
@@ -119,11 +121,16 @@ export default function Profile() {
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart());
+      const token = localStorage.getItem("token");
+
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/user/delete/${currentUser._id}`,
         {
           method: "DELETE",
-          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
       const data = await res.json();
@@ -140,8 +147,16 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signOutUserStart());
+      const token = localStorage.getItem("token");
+
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/signout`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const data = await res.json();
       if (data.success === false) {
@@ -151,16 +166,22 @@ export default function Profile() {
       localStorage.removeItem("token");
       dispatch(signOutUserSuccess(data));
     } catch (error) {
-      dispatch(signOutUserFailure(data.message));
+      dispatch(signOutUserFailure(error.message));
     }
   };
 
   const handleShowListings = async (e) => {
     try {
       setShowListingsError(false);
+      const token = localStorage.getItem("token");
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/user/listings/${currentUser._id}`,
         {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           credentials: "include",
         },
       );
@@ -177,12 +198,20 @@ export default function Profile() {
 
   const handleListingDelete = async (listingId) => {
     try {
+      const token = localStorage.getItem("token");
+
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/listing/delete/${listingId}`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
         },
       );
+
       const data = await res.json();
       if (data.success == false) {
         console.log(data.message);
@@ -295,7 +324,7 @@ export default function Profile() {
                 <p>{listing.name}</p>
               </Link>
 
-              <div className="flex flex-col items-centercenter">
+              <div className="flex flex-col items-center">
                 <button
                   onClick={() => handleListingDelete(listing._id)}
                   className="text-red-700 uppercase"
