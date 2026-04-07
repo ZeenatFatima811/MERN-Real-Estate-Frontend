@@ -104,22 +104,28 @@ export default function CreateListing() {
       if (formData.imageUrls.length < 1) {
         return setError("You must upload at least one image ");
       }
-     if (Number(formData.regularPrice) < Number(formData.discountPrice)){
+      if (Number(formData.regularPrice) < Number(formData.discountPrice)) {
         return setError("Discount price must be lower than regular price");
       }
       setLoading(true);
       setError(false);
       const token = localStorage.getItem("token");
 
-      const res=await fetch(`${import.meta.env.VITE_API_URL}/api/listing/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ✅ MUST
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/listing/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ✅ MUST
+          },
+          body: JSON.stringify({
+            ...formData,
+            userRef: currentUser._id, // 🔥 IMPORTANT
+          }),
+          credentials: "include", // optional but safe
         },
-        body: JSON.stringify(formData),
-        credentials: "include", // optional but safe
-      });
+      );
       const data = await res.json();
       setLoading(false);
       if (data.success === false) {
