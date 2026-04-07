@@ -70,7 +70,12 @@ export default function Profile() {
       return; // 🚨 yahan stop karo
     }
 
-    dispatch(updateUserSuccess(resdata));
+    dispatch(
+      updateUserSuccess({
+        ...currentUser,
+        avatar: urlData.publicUrl,
+      }),
+    );
     // Redux ya local state me update karo
     // dispatch(updateUserAvatar(publicURL));
   };
@@ -98,7 +103,13 @@ export default function Profile() {
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
       }
-      dispatch(updateUserSuccess(data));
+      dispatch(
+        updateUserSuccess({
+          ...currentUser,
+          ...data,
+          avatar: currentUser.avatar, 
+        }),
+      );
       setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure(error.message));
