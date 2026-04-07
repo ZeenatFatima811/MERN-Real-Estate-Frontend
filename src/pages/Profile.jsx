@@ -156,6 +156,7 @@ export default function Profile() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          credentials: "include",
         },
       );
       const data = await res.json();
