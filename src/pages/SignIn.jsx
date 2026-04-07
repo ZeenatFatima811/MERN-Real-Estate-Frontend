@@ -14,7 +14,6 @@ export default function SignIn() {
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   useEffect(() => {
     dispatch(resetUserState());
   }, []);
