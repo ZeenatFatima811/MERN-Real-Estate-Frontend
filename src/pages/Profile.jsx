@@ -148,6 +148,7 @@ export default function Profile() {
         dispatch(signOutUserFailure(data.message));
         // return;
       }
+      localStorage.removeItem("token");
       dispatch(signOutUserSuccess(data));
     } catch (error) {
       dispatch(signOutUserFailure(data.message));
