@@ -29,7 +29,9 @@ export default function CreateListing() {
   useEffect(() => {
     const fetchListing = async () => {
       const listingId = params.listingId;
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/listing/get/${listingId}`);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/listing/get/${listingId}`,
+      );
       const data = await res.json();
       if (data.success === false) {
         console.log(data.message);
@@ -119,21 +121,27 @@ export default function CreateListing() {
       if (formData.imageUrls.length < 1) {
         return setError("You must upload at least one image ");
       }
-      if (+ formData.regularPrice < + formData.discountPrice) {
+      if (+formData.regularPrice < +formData.discountPrice) {
         return setError("Discount price must be lower than regular price");
       }
       setLoading(true);
       setError(false);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/listing/update/${params.listingId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/listing/update/${params.listingId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, 
+          },
+          body: JSON.stringify({
+            ...formData,
+            userRef: currentUser._id,
+          }),
         },
-        body: JSON.stringify({
-          ...formData,
-          userRef: currentUser._id,
-        }),
-      });
+      );
       const data = await res.json();
       setLoading(false);
       if (data.success === false) {
@@ -332,7 +340,9 @@ export default function CreateListing() {
               <button
                 type="button"
                 onClick={() => {
-                  const updatedUrls = formData.imageUrls.filter((_, i) => i !== index);
+                  const updatedUrls = formData.imageUrls.filter(
+                    (_, i) => i !== index,
+                  );
                   setFormData({ ...formData, imageUrls: updatedUrls });
                 }}
                 className="p-3 text-red-700 uppercase hover:opacity-75"
