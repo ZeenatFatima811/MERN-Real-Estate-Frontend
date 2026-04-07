@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../services/supabase";
 import { useSelector } from "react-redux";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateListing() {
   const { currentUser } = useSelector((state) => state.user);
@@ -104,20 +104,21 @@ export default function CreateListing() {
       if (formData.imageUrls.length < 1) {
         return setError("You must upload at least one image ");
       }
-      if ("" + formData.regularPrice < formData.discountPrice) {
+     if (Number(formData.regularPrice) < Number(formData.discountPrice)){
         return setError("Discount price must be lower than regular price");
       }
       setLoading(true);
       setError(false);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/listing/create`, {
+      const token = localStorage.getItem("token");
+
+      const res=await fetch(`${import.meta.env.VITE_API_URL}/api/listing/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ MUST
         },
-        body: JSON.stringify({
-          ...formData,
-          userRef: currentUser._id,
-        }),
+        body: JSON.stringify(formData),
+        credentials: "include", // optional but safe
       });
       const data = await res.json();
       setLoading(false);
@@ -125,7 +126,7 @@ export default function CreateListing() {
         setError(data.message);
         return;
       }
-      navigate(`/listing/${data._id}`)
+      navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -329,7 +330,10 @@ export default function CreateListing() {
             </div>
           ))}
 
-          <button disabled={loading || uploading} className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+          <button
+            disabled={loading || uploading}
+            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+          >
             {loading ? "Creating" : "Create Listing"}
           </button>
           {error && <p className="text-red-700 text-sm">{error}</p>}
