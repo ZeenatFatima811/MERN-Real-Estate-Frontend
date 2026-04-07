@@ -15,7 +15,7 @@ export default function SignIn() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(updateUserFailure(null)); // OR reset
+    dispatch(resetUserState());
   }, []);
   const handleChange = (e) => {
     setFormData({
