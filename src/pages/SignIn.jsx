@@ -13,6 +13,10 @@ export default function SignIn() {
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateUserFailure(null)); // OR reset
+  }, []);
   const handleChange = (e) => {
     setFormData({
       ...formData,
